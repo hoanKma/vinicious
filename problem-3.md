@@ -29,15 +29,15 @@ const WalletPage: React.FC<Props> = (props: Props) => {
 
   const getPriority = (blockchain: any): number => {
     switch (blockchain) {
-      case 'Osmosis':
+      case "Osmosis":
         return 100;
-      case 'Ethereum':
+      case "Ethereum":
         return 50;
-      case 'Arbitrum':
+      case "Arbitrum":
         return 30;
-      case 'Zilliqa':
+      case "Zilliqa":
         return 20;
-      case 'Neo':
+      case "Neo":
         return 20;
       default:
         return -99;
@@ -73,25 +73,24 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     };
   });
 
-  const rows = sortedBalances.map((balance: FormattedWalletBalance, index: number) => {
-    const usdValue = prices[balance.currency] * balance.amount;
-    return (
-      <WalletRow
-        className={classes.row}
-        key={index}
-        amount={balance.amount}
-        usdValue={usdValue}
-        formattedAmount={balance.formatted}
-      />
-    );
-  });
-
-  return (
-    <div {...rest}>
-      {rows}
-    </div>
+  const rows = sortedBalances.map(
+    (balance: FormattedWalletBalance, index: number) => {
+      const usdValue = prices[balance.currency] * balance.amount;
+      return (
+        <WalletRow
+          className={classes.row}
+          key={index}
+          amount={balance.amount}
+          usdValue={usdValue}
+          formattedAmount={balance.formatted}
+        />
+      );
+    }
   );
+
+  return <div {...rest}>{rows}</div>;
 };
+```
 
 Computational Inefficiencies and Anti-patterns
 Unoptimized filter and sort operations: The sortedBalances computation uses filter and sort on every render, even if the balances or prices dependencies haven't changed. This can be computationally expensive, especially when dealing with large arrays.
@@ -104,6 +103,7 @@ Lack of key prop: When rendering the WalletRow component inside the rows array, 
 
 Refactored Code
 
+```typescript
 interface WalletPageProps extends BoxProps {}
 
 const WalletPage: React.FC<WalletPageProps> = (props) => {
