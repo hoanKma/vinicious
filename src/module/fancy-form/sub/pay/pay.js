@@ -11,7 +11,7 @@ const formatter = new Intl.NumberFormat("en-EN");
 const Pay = ({ screen = "pay" }) => {
   const modalRef = useRef();
   const [convertUsd, setConvertUsd] = useState();
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState();
   const [focus, setFocus] = useState(false);
 
   const [token, setToken] = useRecoilState(tokenSelectedAtom(screen));
@@ -59,6 +59,9 @@ const Pay = ({ screen = "pay" }) => {
               const value = item?.target?.value;
               setValue(value);
               setRateData({ value, screen: "pay" });
+            }}
+            onKeyPress={(e) => {
+              if (e.key === "-") e.preventDefault();
             }}
             onFocus={() => setFocus(true)}
           />

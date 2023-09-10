@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
+import FancyForm from "module/fancy-form";
 import "./App.css";
-import FancyForm from "./module/fancy-form";
 
 function App() {
   return (

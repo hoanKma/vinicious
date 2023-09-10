@@ -59,6 +59,9 @@ const Receive = ({ screen = "receive" }) => {
               setValue(value);
               setRateData({ value, screen: "receive" });
             }}
+            onKeyPress={(e) => {
+              if (e.key === "-") e.preventDefault();
+            }}
             onFocus={() => setFocus(true)}
           />
         </Flex>

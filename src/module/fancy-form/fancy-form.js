@@ -29,6 +29,7 @@ const FancyForm = () => {
         Swap
       </Text>
       <Pay />
+
       <Flex
         alignSelf={"center"}
         border={"1px solid #ccc"}
@@ -41,12 +42,15 @@ const FancyForm = () => {
       >
         {/* <UpDownIcon boxSize={4} /> */}
       </Flex>
+
       <Receive />
+
       <Text textAlign={"center"} color={"#666"} marginY={2}>
         1 {tokenPay.currency} ={" "}
         {formatter.format(tokenPay.price / tokenReceive.price)}{" "}
         {tokenReceive.currency} (${formatter.format(tokenPay.price)})
       </Text>
+
       <Button
         type="submit"
         isLoading={false}
