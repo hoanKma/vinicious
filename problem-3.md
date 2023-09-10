@@ -8,9 +8,9 @@
 
 4. Redundant iteration in `formattedBalances`: The `formattedBalances` array is derived from `sortedBalances` by mapping over each balance and creating a new object with the formatted amount. This operation can be combined with the initial mapping in `rows`, eliminating the need for an additional iteration.
 
-5.lhsPriority has not been declared but still used
+5. lhsPriority has not been declared but still used
 
-6.Error when changing the order or number of elements in a list: If you add, remove, or change the order of elements in a list, key={index} is no longer guaranteed to be unique and may result in Display error.Poor performance when updating lists: When you change the list, React needs to compare and update the elements based on the key. Using an index as a key can cause React to have to update the entire list again, affecting performance. To avoid these problems, use a unique and stable key for each element in the list. For example, if there is a unique attribute like balanceId in the balance object, you can use key={balance.balanceId}.
+6. Error when changing the order or number of elements in a list: If you add, remove, or change the order of elements in a list, key={index} is no longer guaranteed to be unique and may result in Display error.Poor performance when updating lists: When you change the list, React needs to compare and update the elements based on the key. Using an index as a key can cause React to have to update the entire list again, affecting performance. To avoid these problems, use a unique and stable key for each element in the list. For example, if there is a unique attribute like balanceId in the balance object, you can use key={balance.balanceId}.
 
 7.
 
