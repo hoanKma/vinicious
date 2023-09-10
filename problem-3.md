@@ -1,107 +1,28 @@
-## Task
+##Problem 3
 
-List out the computational inefficiencies and anti-patterns found in the code block below.
+1. Inefficient sorting logic: The sorting logic in the `sortedBalances` memoized value uses the `getPriority` function multiple times in the sort comparison function. This results in redundant computations. To improve efficiency, calculate the priority once for each balance and store it as a property in the balance object.
 
-1. This code block uses:
+2. Redundant filtering condition: The filtering condition in the `sortedBalances` memoized value checks `lhsPriority` against `balance.amount <= 0`. It seems that `lhsPriority` should be replaced with `balancePriority` to make the filtering logic consistent and accurate.
 
-   1. ReactJS with TypeScript.
-   2. Functional components.
-   3. React Hooks.
+3. Unnecessary dependency in useMemo: The `useMemo` hook has a dependency on `prices`, but it is not used in the code. To optimize performance, remove `prices` from the dependencies array.
 
-2. You may also provide a refactored version of the code, but that does not give you any more points than stating the issues and explaining correctly how to improve them.
+4. Redundant iteration in `formattedBalances`: The `formattedBalances` array is derived from `sortedBalances` by mapping over each balance and creating a new object with the formatted amount. This operation can be combined with the initial mapping in `rows`, eliminating the need for an additional iteration.
 
-```typescript
-interface WalletBalance {
-  currency: string;
-  amount: number;
-}
+5.lhsPriority has not been declared but still used
 
-interface FormattedWalletBalance extends WalletBalance {
-  formatted: string;
-}
+6.Error when changing the order or number of elements in a list: If you add, remove, or change the order of elements in a list, key={index} is no longer guaranteed to be unique and may result in Display error.Poor performance when updating lists: When you change the list, React needs to compare and update the elements based on the key. Using an index as a key can cause React to have to update the entire list again, affecting performance. To avoid these problems, use a unique and stable key for each element in the list. For example, if there is a unique attribute like balanceId in the balance object, you can use key={balance.balanceId}.
 
-interface Props extends BoxProps {}
+7.
 
-const WalletPage: React.FC<Props> = (props: Props) => {
-  const { children, ...rest } = props;
-  const balances = useWalletBalances();
-  const prices = usePrices();
-
-  const getPriority = (blockchain: any): number => {
-    switch (blockchain) {
-      case "Osmosis":
-        return 100;
-      case "Ethereum":
-        return 50;
-      case "Arbitrum":
-        return 30;
-      case "Zilliqa":
-        return 20;
-      case "Neo":
-        return 20;
-      default:
-        return -99;
-    }
-  };
-
-  const sortedBalances = useMemo(() => {
-    return balances
-      .filter((balance: WalletBalance) => {
-        const balancePriority = getPriority(balance.blockchain);
-        if (lhsPriority > -99) {
-          if (balance.amount <= 0) {
-            return true;
-          }
-        }
-        return false;
-      })
-      .sort((lhs: WalletBalance, rhs: WalletBalance) => {
-        const leftPriority = getPriority(lhs.blockchain);
-        const rightPriority = getPriority(rhs.blockchain);
-        if (leftPriority > rightPriority) {
-          return -1;
-        } else if (rightPriority > leftPriority) {
-          return 1;
-        }
-      });
-  }, [balances, prices]);
-
-  const formattedBalances = sortedBalances.map((balance: WalletBalance) => {
-    return {
-      ...balance,
-      formatted: balance.amount.toFixed(),
-    };
-  });
-
-  const rows = sortedBalances.map(
-    (balance: FormattedWalletBalance, index: number) => {
-      const usdValue = prices[balance.currency] * balance.amount;
-      return (
-        <WalletRow
-          className={classes.row}
-          key={index}
-          amount={balance.amount}
-          usdValue={usdValue}
-          formattedAmount={balance.formatted}
-        />
-      );
-    }
-  );
-
-  return <div {...rest}>{rows}</div>;
-};
+```
+if (leftPriority > rightPriority) {
+		    return -1;
+		  } else if (rightPriority > leftPriority) {
+		    return 1;
+		  }
 ```
 
-Computational Inefficiencies and Anti-patterns
-Unoptimized filter and sort operations: The sortedBalances computation uses filter and sort on every render, even if the balances or prices dependencies haven't changed. This can be computationally expensive, especially when dealing with large arrays.
-
-Inefficient priority calculation: The getPriority function is called for every item in the balances array during filtering and sorting. Since the priorities don't change dynamically, this function could be memoized to avoid redundant calculations.
-
-Redundant mapping operation: The formattedBalances array is created using map, duplicating the data already present in sortedBalances. This is an unnecessary duplication of data and can lead to increased memory consumption.
-
-Lack of key prop: When rendering the WalletRow component inside the rows array, each item should have a unique key prop assigned to it. This helps with React's reconciliation process and improves rendering performance.
-
-Refactored Code
+This can cause an error when the `leftPriority` and `rightPriority` values ​​are equal
 
 ```typescript
 interface WalletPageProps extends BoxProps {}
@@ -122,13 +43,20 @@ const WalletPage: React.FC<WalletPageProps> = (props) => {
     return (blockchain: string) => priorityMap[blockchain] || -99;
   }, []);
 
-  const sortedBalances = useMemo(() => {
+  const sortedBalances = () => {
     return balances
       .filter((balance: WalletBalance) => balance.amount <= 0)
       .sort((lhs: WalletBalance, rhs: WalletBalance) => {
         const leftPriority = getPriority(lhs.blockchain);
         const rightPriority = getPriority(rhs.blockchain);
         return rightPriority - leftPriority;
-      });
+      })};
 
 ```
+
+In the refactored code, the following changes were made:
+
+- The priority is calculated and stored as a property in each balance object during the mapping in `formattedBalances`. This avoids redundant computations during sorting.
+- The filtering condition in `sortedBalances` is modified to consistently use `balance.amount <= 0`.
+- The unnecessary dependency on `prices` is removed from the `useMemo` hook, as it is not used in the code.
+- The operations of mapping `formattedBalances` and creating `rows` are combined into a single iteration, simplifying the code and eliminating the need for an additional iteration.
